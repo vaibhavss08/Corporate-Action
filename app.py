@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import warnings
 import streamlit as st
 
-st.title('Target')
+st.title('Upcoming Corporate Action')
 
 warnings.filterwarnings('ignore')
 
