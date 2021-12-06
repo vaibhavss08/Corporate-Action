@@ -3,6 +3,7 @@ import pandas as pd
 from tabulate import tabulate
 from selenium import webdriver
 import warnings
+import os
 import streamlit as st
 from bs4 import BeautifulSoup as BSoup
 from lxml import etree
@@ -10,9 +11,7 @@ warnings.filterwarnings('ignore')
 
 st.title('Upcoming Corporate Action')
 
-
 chrome_options = webdriver.ChromeOptions()
-PATH = "C:\Program Files (x86)\chromedriver.exe"
 chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--disable-dev-shm-usage")
