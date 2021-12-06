@@ -1,15 +1,15 @@
-from selenium import webdriver
-import time
-import os
+from datetime import datetime, timedelta
 import pandas as pd
 from tabulate import tabulate
-from datetime import datetime, timedelta
+from selenium import webdriver
 import warnings
 import streamlit as st
+from bs4 import BeautifulSoup as BSoup
+from lxml import etree
+warnings.filterwarnings('ignore')
 
 st.title('Upcoming Corporate Action')
 
-warnings.filterwarnings('ignore')
 
 chrome_options = webdriver.ChromeOptions()
 PATH = "C:\Program Files (x86)\chromedriver.exe"
@@ -21,36 +21,41 @@ chrome_options.add_argument("--no-sandbox")
 
 driver = webdriver.Chrome(executable_path= os.environ.get("CHROMEDRIVER_PATH"), options=chrome_options)
 
-pd.set_option('display.max_colwidth', None)
 driver.get("https://www.bseindia.com/corporates/corporates_act.html")
 driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
-time.sleep(5)
 
-rows = 1 + len(driver.find_elements_by_xpath("/html/body/div[5]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr"))
+soup = BSoup(driver.page_source, 'html.parser')
+dom = etree.HTML(str(soup))
+
+rows = 1 + len(dom.xpath("/html/body/div[5]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr"))
 
 stock=[]
 ex_date=[]
 purpose=[]
 
+replace = '!?_@#$%^&*.,-'
+
 for r in range(2, rows + 1):
     try:
-        date = driver.find_element_by_xpath("/html/body/div[5]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr[" + str(r) + "]/td[3]")
+        date = (dom.xpath("/html/body/div[5]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr[" + str(r) + "]/td[3]")[0].text)
+
         for i in range(25):
             d = (datetime.now() + timedelta(i)).strftime("%d " "%b " "%Y")
 
-            if(date.text.strip() == d):
-                stock.append(driver.find_element_by_xpath(
-                    "/html/body/div[5]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr[" + str(r) + "]/td[2]").text)
-                purpose.append(driver.find_element_by_xpath(
-                    "/html/body/div[5]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr[" + str(r) + "]/td[4]").text)
+            if(date.strip() == d):
+                stock_name = (dom.xpath("/html/body/div[5]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr[" + str(r) + "]/td[2]")[0].text)
+                stock_name = stock_name.strip()
+                for k in replace:
+                    stock_name = stock_name.replace(k, "")
 
+                stock.append(stock_name)
+                purpose.append(dom.xpath("/html/body/div[5]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr[" + str(r) + "]/td[4]")[0].text)
                 ex_date.append(d)
     except:
         continue
 
 
+driver.quit()
 results = pd.DataFrame(list(zip(stock, ex_date, purpose)), columns=['Stock', 'Ex-Date', 'Purpose'])
-pd.set_option('display.max_colwidth', None)
 results.index+=1
 st.table(results)
-driver.quit()
