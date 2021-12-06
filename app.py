@@ -3,10 +3,10 @@ import pandas as pd
 from tabulate import tabulate
 from selenium import webdriver
 import warnings
-import os
-import streamlit as st
 from bs4 import BeautifulSoup as BSoup
 from lxml import etree
+import os
+
 warnings.filterwarnings('ignore')
 
 st.title('Upcoming Corporate Action')
