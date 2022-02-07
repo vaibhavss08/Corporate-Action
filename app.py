@@ -43,7 +43,7 @@ for r in range(2, rows + 1):
     try:
         date = (dom.xpath("/html/body/div[5]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr[" + str(r) + "]/td[3]")[0].text)
 
-        if flag or datetime.now() <= datetime.strptime(date,"%d %b %Y"):
+        if flag or datetime.now().strftime("%d/%m/%Y") <= datetime.strptime(date,"%d %b %Y").strftime("%d/%m/%Y"):
             stock_name = (dom.xpath(
                 "/html/body/div[5]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr[" + str(r) + "]/td[2]")[0].text)
             stock_name = stock_name.strip()
