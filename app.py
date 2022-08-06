@@ -28,7 +28,7 @@ driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
 soup = BSoup(driver.page_source, 'html.parser')
 dom = etree.HTML(str(soup))
 
-rows = 1 + len(dom.xpath("/html/body/div[5]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr"))
+rows = 1 + len(dom.xpath("/html/body/div[6]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr"))
 
 stock=[]
 ex_date=[]
@@ -41,18 +41,18 @@ flag = False
 
 for r in range(2, rows + 1):
     try:
-        date = (dom.xpath("/html/body/div[5]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr[" + str(r) + "]/td[3]")[0].text)
+        date = (dom.xpath("/html/body/div[6]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr[" + str(r) + "]/td[3]")[0].text)
 
         if flag or datetime.now().strftime("%d/%m/%Y") <= datetime.strptime(date,"%d %b %Y").strftime("%d/%m/%Y"):
             stock_name = (dom.xpath(
-                "/html/body/div[5]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr[" + str(r) + "]/td[2]")[0].text)
+                "/html/body/div[6]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr[" + str(r) + "]/td[2]")[0].text)
             stock_name = stock_name.strip()
             for k in replace:
                 stock_name = stock_name.replace(k, "")
 
             stock.append(stock_name)
             purpose.append(dom.xpath(
-                "/html/body/div[5]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr[" + str(r) + "]/td[4]")[0].text)
+                "/html/body/div[6]/div/div/div/table[1]/tbody/tr/td/div/table/tbody/tr[" + str(r) + "]/td[4]")[0].text)
             ex_date.append(date)
             flag = True
         else:
@@ -66,15 +66,15 @@ driver.get("https://www.bseindia.com/corporates/Forth_Results.html")
 soup = BSoup(driver.page_source, 'html.parser')
 dom = etree.HTML(str(soup))
 
-rows = 1 + len(dom.xpath("/html/body/div[5]/div/div/div/table/tbody/tr/td/table/tbody/tr"))
+rows = 1 + len(dom.xpath("/html/body/div[6]/div/div/div/table/tbody/tr/td/table/tbody/tr"))
 flag = True
 stock_result= []
 result_date = []
 
 
 for r in range(2, rows):
-   stock_result.append(dom.xpath("/html/body/div[5]/div/div/div/table/tbody/tr/td/table/tbody/tr["+str(r)+"]/td[2]")[0].text)
-   result_date.append(dom.xpath("/html/body/div[5]/div/div/div/table/tbody/tr/td/table/tbody/tr["+str(r)+"]/td[3]")[0].text)
+   stock_result.append(dom.xpath("/html/body/div[6]/div/div/div/table/tbody/tr/td/table/tbody/tr["+str(r)+"]/td[2]")[0].text)
+   result_date.append(dom.xpath("/html/body/div[6]/div/div/div/table/tbody/tr/td/table/tbody/tr["+str(r)+"]/td[3]")[0].text)
 
 
 results = pd.DataFrame(list(zip(stock, ex_date, purpose)), columns=['Stock', 'Ex-Date', 'Purpose'])
